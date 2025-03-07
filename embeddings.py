@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.INFO)
 
 def get_tfidf_embd(df: pd.DataFrame) -> np.ndarray:
     """
-    Generate TF-IDF embeddings by combining Ticket Summary and Interaction Content.
+    Generate enhanced TF-IDF embeddings by combining Ticket Summary and Interaction Content.
 
     Args:
         df (pd.DataFrame): DataFrame containing text fields.
@@ -17,9 +17,25 @@ def get_tfidf_embd(df: pd.DataFrame) -> np.ndarray:
     Returns:
         np.ndarray: TF-IDF embedding matrix.
     """
-    text_data = df[Config.TICKET_SUMMARY] + " " + df[Config.INTERACTION_CONTENT]
-    vectorizer = TfidfVectorizer(max_features=2000, min_df=4, max_df=0.90)
-    X = vectorizer.fit_transform(text_data).toarray()
+    # Basic preprocessing - simple version without NLTK dependencies
+    df['processed_summary'] = df[Config.TICKET_SUMMARY].fillna('').str.lower()
+    df['processed_content'] = df[Config.INTERACTION_CONTENT].fillna('').str.lower()
+
+    # Create combined text
+    combined_text = df['processed_summary'] + " " + df['processed_content']
+
+    # Create the vectorizer with better parameters
+    vectorizer = TfidfVectorizer(
+        max_features=1500,
+        min_df=2,
+        max_df=0.95,
+        ngram_range=(1, 2),
+        sublinear_tf=True
+    )
+
+    # Transform the text
+    X = vectorizer.fit_transform(combined_text).toarray()
+
     logging.info(f"TF-IDF embeddings shape: {X.shape}")
     return X
 

@@ -2,10 +2,35 @@ from modelling.randomforest import RandomForest
 from Config import Config
 import numpy as np
 import warnings
+import os
 from collections import Counter
 from sklearn.metrics import classification_report
 from sklearn.exceptions import UndefinedMetricWarning
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+import logging
+
+# Import our new utility modules
+import sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+try:
+    from utils.imbalance_handling import handle_imbalance
+    from utils.error_analysis import detailed_error_analysis
+    from utils.hyperparameter_tuning import optimize_hyperparameters
+
+    UTILS_AVAILABLE = True
+except ImportError:
+    UTILS_AVAILABLE = False
+    logging.warning("Utils modules not found. Using basic implementation.")
+
+# Try importing XGBoost model
+try:
+    import xgboost as xgb
+
+    XGBOOST_AVAILABLE = True
+except ImportError:
+    XGBOOST_AVAILABLE = False
 
 # Suppress undefined metric warnings
 warnings.filterwarnings("ignore", category=UndefinedMetricWarning)
@@ -70,15 +95,56 @@ def hierarchical_model_predict(data, df, group_name):
 
     # Stage 1: Train a model for Type 2
     print("\n=== Stage 1: Type 2 ===")
-    type2_model = RandomForest("Type2_Model", X_train, train_df[Config.TYPE_COLS[0]].values)
-    # Train the model directly with X_train instead of using data object
-    type2_model.mdl.fit(X_train, train_df[Config.TYPE_COLS[0]].values)
 
-    # Get predictions for Type 2
-    type2_preds = type2_model.mdl.predict(X_test)
+    # Handle class imbalance for Type 2 if utils are available
+    if UTILS_AVAILABLE:
+        type2_X_train, type2_y_train = handle_imbalance(
+            X_train, train_df[Config.TYPE_COLS[0]].values, strategy='smote'
+        )
+    else:
+        type2_X_train, type2_y_train = X_train, train_df[Config.TYPE_COLS[0]].values
+
+    # Choose model for Type 2
+    if XGBOOST_AVAILABLE:
+        # Use XGBoost with label encoding
+        label_encoder = LabelEncoder()
+        y_encoded = label_encoder.fit_transform(type2_y_train)
+
+        # Create and train XGBoost model
+        xgb_model = xgb.XGBClassifier(
+            n_estimators=200,
+            learning_rate=0.1,
+            max_depth=7,
+            min_child_weight=1,
+            gamma=0,
+            subsample=0.8,
+            colsample_bytree=0.8,
+            objective='multi:softprob',
+            random_state=0,
+            eval_metric='mlogloss'
+        )
+        xgb_model.fit(type2_X_train, y_encoded)
+
+        # Make predictions and decode them back to original labels
+        encoded_preds = xgb_model.predict(X_test)
+        type2_preds = label_encoder.inverse_transform(encoded_preds)
+    else:
+        # Use RandomForest otherwise
+        type2_model = RandomForest("Type2_Model", type2_X_train, type2_y_train)
+        type2_model.mdl.fit(type2_X_train, type2_y_train)
+        type2_preds = type2_model.mdl.predict(X_test)
+
     type2_true = test_df[Config.TYPE_COLS[0]].values
 
     print(classification_report(type2_true, type2_preds, zero_division=0))
+
+    # Perform detailed error analysis for Type 2 if available
+    if UTILS_AVAILABLE:
+        try:
+            detailed_error_analysis(type2_true, type2_preds,
+                                    stage_name="Stage 1: Type 2")
+        except Exception as e:
+            logging.warning(f"Error analysis failed: {str(e)}")
 
     # Get unique values for Type 2 in the training set
     type2_values = train_df[Config.TYPE_COLS[0]].unique()
@@ -98,9 +164,16 @@ def hierarchical_model_predict(data, df, group_name):
         filtered_X_train = X_train[type2_filter]
         filtered_y_train = train_df[type2_filter][Config.TYPE_COLS[1]].values
 
+        # Skip if only one class
         if len(np.unique(filtered_y_train)) < 2:
             print(f"Skipping {type2_val} due to insufficient class diversity")
             continue
+
+        # Handle class imbalance for Type 3 if utils are available
+        if UTILS_AVAILABLE:
+            filtered_X_train, filtered_y_train = handle_imbalance(
+                filtered_X_train, filtered_y_train, strategy='smote'
+            )
 
         # Train a model for Type 3 on the filtered data
         type3_model = RandomForest(f"Type3_Model_{type2_val}", filtered_X_train, filtered_y_train)
@@ -117,6 +190,15 @@ def hierarchical_model_predict(data, df, group_name):
                 preds = type3_model.mdl.predict(filtered_test_X)
                 print(classification_report(filtered_test_y, preds, zero_division=0))
 
+                # Perform detailed error analysis for this Type 3 model if available
+                if UTILS_AVAILABLE and len(np.unique(filtered_test_y)) > 1:
+                    try:
+                        detailed_error_analysis(filtered_test_y, preds,
+                                                stage_name=f"Stage 2: Type3 for {type2_val}")
+                    except Exception as e:
+                        logging.warning(f"Error analysis failed: {str(e)}")
+
+    # Continue with Stage 3 as before...
     # Stage 3: Train models for Type 4 for each Type 2 + Type 3 combination
     type4_models = {}
     for type2_val in type2_values:
@@ -142,9 +224,16 @@ def hierarchical_model_predict(data, df, group_name):
             filtered_X_train = X_train[type23_filter]
             filtered_y_train = train_df[type23_filter][Config.TYPE_COLS[2]].values
 
+            # Skip if only one class
             if len(np.unique(filtered_y_train)) < 2:
                 print(f"Skipping {type2_val}_{type3_val} due to insufficient class diversity")
                 continue
+
+            # Handle class imbalance for Type 4 if utils are available
+            if UTILS_AVAILABLE:
+                filtered_X_train, filtered_y_train = handle_imbalance(
+                    filtered_X_train, filtered_y_train, strategy='smote'
+                )
 
             # Train a model for Type 4 on the filtered data
             type4_model = RandomForest(f"Type4_Model_{type2_val}_{type3_val}",
@@ -162,6 +251,14 @@ def hierarchical_model_predict(data, df, group_name):
                 if len(filtered_test_X) > 0:
                     preds = type4_model.mdl.predict(filtered_test_X)
                     print(classification_report(filtered_test_y, preds, zero_division=0))
+
+                    # Perform detailed error analysis for this Type 4 model if available
+                    if UTILS_AVAILABLE and len(np.unique(filtered_test_y)) > 1:
+                        try:
+                            detailed_error_analysis(filtered_test_y, preds,
+                                                    stage_name=f"Stage 3: Type4 for {type2_val}_{type3_val}")
+                        except Exception as e:
+                            logging.warning(f"Error analysis failed: {str(e)}")
 
     # Evaluate hierarchical accuracy on test data
     total_scores = []

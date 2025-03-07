@@ -1,0 +1,213 @@
+2025-03-07 16:19:30,362 - root - INFO - Logging to file initialized
+2025-03-07 16:19:30,362 - root - INFO - Loading data...
+2025-03-07 16:19:30,378 - root - INFO - Data loaded: 206 rows, 14 columns
+2025-03-07 16:19:30,378 - root - INFO - Preprocessing data...
+2025-03-07 16:19:30,468 - root - INFO - Data preprocessed: 206 rows remaining
+2025-03-07 16:19:30,469 - root - INFO - 
+Processing group: AppGallery &amp; Games 
+2025-03-07 16:19:30,491 - root - INFO - TF-IDF embeddings shape: (122, 1500)
+2025-03-07 16:19:30,493 - root - INFO - 
+==== Chained Multi-Output Classification ====
+2025-03-07 16:19:30,496 - root - INFO - Original class distribution: {'Others': np.int64(26), 'Problem/Fault': np.int64(55), 'Suggestion': np.int64(16)}
+2025-03-07 16:19:30,496 - root - INFO - Resampled class distribution: {'Others': np.int64(55), 'Problem/Fault': np.int64(55), 'Suggestion': np.int64(55)}
+2025-03-07 16:19:30,496 - root - INFO - Resampled data shape: (165, 1500), Original: (97, 1500)
+2025-03-07 16:19:31,186 - root - INFO - Saved confusion matrix to error_analysis/confusion_matrix_Stage 1_ Type2_20250307_161931.png
+2025-03-07 16:19:31,186 - root - INFO - Top confused classes for Stage 1: Type2:
+2025-03-07 16:19:31,186 - root - INFO - True: Problem/Fault, Predicted: Others, Count: 3, Rate: 0.21
+2025-03-07 16:19:31,186 - root - INFO - True: Suggestion, Predicted: Problem/Fault, Count: 2, Rate: 0.50
+2025-03-07 16:19:31,186 - root - INFO - True: Others, Predicted: Problem/Fault, Count: 1, Rate: 0.14
+2025-03-07 16:19:31,186 - root - INFO - True: Problem/Fault, Predicted: Suggestion, Count: 1, Rate: 0.07
+2025-03-07 16:19:31,186 - root - INFO - True: Suggestion, Predicted: Others, Count: 1, Rate: 0.25
+2025-03-07 16:19:31,186 - root - INFO - 
+Per-class accuracy for Stage 1: Type2:
+2025-03-07 16:19:31,186 - root - INFO - Others: 0.86 (6/7)
+2025-03-07 16:19:31,186 - root - INFO - Problem/Fault: 0.71 (10/14)
+2025-03-07 16:19:31,186 - root - INFO - Suggestion: 0.25 (1/4)
+2025-03-07 16:19:31,309 - root - INFO - Saved confusion matrix to error_analysis/confusion_matrix_Stage 2_ Type2+Type3_20250307_161931.png
+2025-03-07 16:19:31,309 - root - INFO - Top confused classes for Stage 2: Type2+Type3:
+2025-03-07 16:19:31,309 - root - INFO - True: Others_Unknown, Predicted: Suggestion_General, Count: 2, Rate: 0.29
+2025-03-07 16:19:31,309 - root - INFO - True: Other, Predicted: Suggestion_General, Count: 1, Rate: 1.00
+2025-03-07 16:19:31,309 - root - INFO - True: Problem/Fault_AppGallery-Install/Upgrade, Predicted: Other, Count: 1, Rate: 0.17
+2025-03-07 16:19:31,309 - root - INFO - True: Problem/Fault_AppGallery-Install/Upgrade, Predicted: Problem/Fault_AppGallery-Use, Count: 1, Rate: 0.17
+2025-03-07 16:19:31,309 - root - INFO - True: Problem/Fault_AppGallery-Install/Upgrade, Predicted: Suggestion_General, Count: 1, Rate: 0.17
+2025-03-07 16:19:31,309 - root - INFO - True: Problem/Fault_AppGallery-Use, Predicted: Problem/Fault_Coupon/Gifts/Points Issues, Count: 1, Rate: 1.00
+2025-03-07 16:19:31,309 - root - INFO - True: Problem/Fault_Coupon/Gifts/Points Issues, Predicted: Suggestion_VIP / Offers / Promotions, Count: 1, Rate: 0.25
+2025-03-07 16:19:31,309 - root - INFO - True: Suggestion_VIP / Offers / Promotions, Predicted: Problem/Fault_Third Party APPs, Count: 1, Rate: 0.33
+2025-03-07 16:19:31,309 - root - INFO - 
+Per-class accuracy for Stage 2: Type2+Type3:
+2025-03-07 16:19:31,309 - root - INFO - Other: 0.00 (0/1)
+2025-03-07 16:19:31,309 - root - INFO - Others_Unknown: 0.71 (5/7)
+2025-03-07 16:19:31,309 - root - INFO - Problem/Fault_AppGallery-Install/Upgrade: 0.50 (3/6)
+2025-03-07 16:19:31,309 - root - INFO - Problem/Fault_AppGallery-Use: 0.00 (0/1)
+2025-03-07 16:19:31,309 - root - INFO - Problem/Fault_Coupon/Gifts/Points Issues: 0.75 (3/4)
+2025-03-07 16:19:31,309 - root - INFO - Problem/Fault_Third Party APPs: 1.00 (2/2)
+2025-03-07 16:19:31,309 - root - INFO - Problem/Fault_VIP / Offers / Promotions: 1.00 (1/1)
+2025-03-07 16:19:31,309 - root - INFO - Suggestion_General: 0.00 (0/0)
+2025-03-07 16:19:31,309 - root - INFO - Suggestion_VIP / Offers / Promotions: 0.67 (2/3)
+2025-03-07 16:19:31,474 - root - INFO - Saved confusion matrix to error_analysis/confusion_matrix_Stage 3_ Type2+Type3+Type4_20250307_161931.png
+2025-03-07 16:19:31,474 - root - INFO - Top confused classes for Stage 3: Type2+Type3+Type4:
+2025-03-07 16:19:31,474 - root - INFO - True: Other, Predicted: Problem/Fault_AppGallery-Install/Upgrade_Other download/install/update issue, Count: 1, Rate: 0.33
+2025-03-07 16:19:31,474 - root - INFO - True: Other, Predicted: Problem/Fault_AppGallery-Use_UI Abnormal in Huawei AppGallery, Count: 1, Rate: 0.33
+2025-03-07 16:19:31,474 - root - INFO - True: Others_Unknown_Unknown, Predicted: Other, Count: 1, Rate: 0.14
+2025-03-07 16:19:31,474 - root - INFO - True: Problem/Fault_AppGallery-Use_UI Abnormal in Huawei AppGallery, Predicted: Problem/Fault_Coupon/Gifts/Points Issues_Can't use or acquire, Count: 1, Rate: 1.00
+2025-03-07 16:19:31,474 - root - INFO - True: Problem/Fault_Coupon/Gifts/Points Issues_Cooperated campaign issue, Predicted: Suggestion_VIP / Offers / Promotions_Offers / Vouchers / Promotions, Count: 1, Rate: 1.00
+2025-03-07 16:19:31,474 - root - INFO - True: Suggestion_VIP / Offers / Promotions_Offers / Vouchers / Promotions, Predicted: Problem/Fault_Third Party APPs_Refund, Count: 1, Rate: 0.33
+2025-03-07 16:19:31,474 - root - INFO - 
+Per-class accuracy for Stage 3: Type2+Type3+Type4:
+2025-03-07 16:19:31,474 - root - INFO - Other: 0.33 (1/3)
+2025-03-07 16:19:31,474 - root - INFO - Others_Unknown_Unknown: 0.86 (6/7)
+2025-03-07 16:19:31,474 - root - INFO - Problem/Fault_AppGallery-Install/Upgrade_Can't install Apps: 1.00 (2/2)
+2025-03-07 16:19:31,474 - root - INFO - Problem/Fault_AppGallery-Install/Upgrade_Other download/install/update issue: 1.00 (2/2)
+2025-03-07 16:19:31,474 - root - INFO - Problem/Fault_AppGallery-Use_UI Abnormal in Huawei AppGallery: 0.00 (0/1)
+2025-03-07 16:19:31,474 - root - INFO - Problem/Fault_Coupon/Gifts/Points Issues_Can't use or acquire: 1.00 (3/3)
+2025-03-07 16:19:31,474 - root - INFO - Problem/Fault_Coupon/Gifts/Points Issues_Cooperated campaign issue: 0.00 (0/1)
+2025-03-07 16:19:31,474 - root - INFO - Problem/Fault_Third Party APPs_Refund: 1.00 (2/2)
+2025-03-07 16:19:31,474 - root - INFO - Problem/Fault_VIP / Offers / Promotions_Offers / Vouchers / Promotions: 1.00 (1/1)
+2025-03-07 16:19:31,474 - root - INFO - Suggestion_VIP / Offers / Promotions_Offers / Vouchers / Promotions: 0.67 (2/3)
+2025-03-07 16:19:31,474 - root - INFO - 
+==== Hierarchical Modeling ====
+2025-03-07 16:19:31,476 - root - INFO - Original class distribution: {'Others': np.int64(26), 'Problem/Fault': np.int64(55), 'Suggestion': np.int64(16)}
+2025-03-07 16:19:31,476 - root - INFO - Resampled class distribution: {'Others': np.int64(55), 'Problem/Fault': np.int64(55), 'Suggestion': np.int64(55)}
+2025-03-07 16:19:31,476 - root - INFO - Resampled data shape: (165, 1500), Original: (97, 1500)
+2025-03-07 16:19:32,493 - root - INFO - Saved confusion matrix to error_analysis/confusion_matrix_Stage 1_ Type 2_20250307_161932.png
+2025-03-07 16:19:32,493 - root - INFO - Top confused classes for Stage 1: Type 2:
+2025-03-07 16:19:32,493 - root - INFO - True: Problem/Fault, Predicted: Others, Count: 3, Rate: 0.21
+2025-03-07 16:19:32,493 - root - INFO - True: Suggestion, Predicted: Problem/Fault, Count: 2, Rate: 0.50
+2025-03-07 16:19:32,493 - root - INFO - True: Others, Predicted: Problem/Fault, Count: 1, Rate: 0.14
+2025-03-07 16:19:32,493 - root - INFO - True: Others, Predicted: Suggestion, Count: 1, Rate: 0.14
+2025-03-07 16:19:32,493 - root - INFO - 
+Per-class accuracy for Stage 1: Type 2:
+2025-03-07 16:19:32,493 - root - INFO - Others: 0.71 (5/7)
+2025-03-07 16:19:32,493 - root - INFO - Problem/Fault: 0.79 (11/14)
+2025-03-07 16:19:32,493 - root - INFO - Suggestion: 0.50 (2/4)
+2025-03-07 16:19:32,494 - root - INFO - Original class distribution: {'AppGallery-Install/Upgrade': np.int64(13), 'AppGallery-Use': np.int64(4), 'Coupon/Gifts/Points Issues': np.int64(22), 'General': np.int64(3), 'Third Party APPs': np.int64(9), 'VIP / Offers / Promotions': np.int64(4)}
+2025-03-07 16:19:32,494 - root - INFO - Resampled class distribution: {'AppGallery-Install/Upgrade': np.int64(22), 'AppGallery-Use': np.int64(22), 'Coupon/Gifts/Points Issues': np.int64(22), 'General': np.int64(22), 'Third Party APPs': np.int64(22), 'VIP / Offers / Promotions': np.int64(22)}
+2025-03-07 16:19:32,494 - root - INFO - Resampled data shape: (132, 1500), Original: (55, 1500)
+2025-03-07 16:19:33,129 - root - INFO - Saved confusion matrix to error_analysis/confusion_matrix_Stage 2_ Type3 for Problem_Fault_20250307_161933.png
+2025-03-07 16:19:33,129 - root - INFO - Top confused classes for Stage 2: Type3 for Problem/Fault:
+2025-03-07 16:19:33,129 - root - INFO - True: AppGallery-Install/Upgrade, Predicted: General, Count: 2, Rate: 0.33
+2025-03-07 16:19:33,129 - root - INFO - True: AppGallery-Install/Upgrade, Predicted: AppGallery-Use, Count: 1, Rate: 0.17
+2025-03-07 16:19:33,129 - root - INFO - True: AppGallery-Use, Predicted: Coupon/Gifts/Points Issues, Count: 1, Rate: 1.00
+2025-03-07 16:19:33,129 - root - INFO - True: Third Party APPs, Predicted: AppGallery-Install/Upgrade, Count: 1, Rate: 0.50
+2025-03-07 16:19:33,129 - root - INFO - True: VIP / Offers / Promotions, Predicted: General, Count: 1, Rate: 1.00
+2025-03-07 16:19:33,129 - root - INFO - 
+Per-class accuracy for Stage 2: Type3 for Problem/Fault:
+2025-03-07 16:19:33,129 - root - INFO - AppGallery-Install/Upgrade: 0.50 (3/6)
+2025-03-07 16:19:33,129 - root - INFO - AppGallery-Use: 0.00 (0/1)
+2025-03-07 16:19:33,129 - root - INFO - Coupon/Gifts/Points Issues: 1.00 (4/4)
+2025-03-07 16:19:33,129 - root - INFO - General: 0.00 (0/0)
+2025-03-07 16:19:33,129 - root - INFO - Third Party APPs: 0.50 (1/2)
+2025-03-07 16:19:33,129 - root - INFO - VIP / Offers / Promotions: 0.00 (0/1)
+2025-03-07 16:19:33,129 - root - INFO - Original class distribution: {'AppGallery-Use': np.int64(3), 'General': np.int64(7), 'Others': np.int64(1), 'VIP / Offers / Promotions': np.int64(5)}
+2025-03-07 16:19:33,129 - root - INFO - Resampled class distribution: {'AppGallery-Use': np.int64(7), 'General': np.int64(7), 'Others': np.int64(1), 'VIP / Offers / Promotions': np.int64(7)}
+2025-03-07 16:19:33,129 - root - INFO - Resampled data shape: (22, 1500), Original: (16, 1500)
+2025-03-07 16:19:33,616 - root - INFO - Saved confusion matrix to error_analysis/confusion_matrix_Stage 2_ Type3 for Suggestion_20250307_161933.png
+2025-03-07 16:19:33,616 - root - INFO - Top confused classes for Stage 2: Type3 for Suggestion:
+2025-03-07 16:19:33,616 - root - INFO - True: AppGallery-Use, Predicted: General, Count: 1, Rate: 1.00
+2025-03-07 16:19:33,616 - root - INFO - 
+Per-class accuracy for Stage 2: Type3 for Suggestion:
+2025-03-07 16:19:33,617 - root - INFO - AppGallery-Use: 0.00 (0/1)
+2025-03-07 16:19:33,617 - root - INFO - General: 0.00 (0/0)
+2025-03-07 16:19:33,617 - root - INFO - VIP / Offers / Promotions: 1.00 (3/3)
+2025-03-07 16:19:33,617 - root - INFO - Original class distribution: {"Can't use or acquire": np.int64(16), 'Cooperated campaign issue': np.int64(6)}
+2025-03-07 16:19:33,617 - root - INFO - Resampled class distribution: {"Can't use or acquire": np.int64(16), 'Cooperated campaign issue': np.int64(16)}
+2025-03-07 16:19:33,617 - root - INFO - Resampled data shape: (32, 1500), Original: (22, 1500)
+2025-03-07 16:19:34,097 - root - INFO - Saved confusion matrix to error_analysis/confusion_matrix_Stage 3_ Type4 for Problem_Fault_Coupon_Gifts_Points Issues_20250307_161934.png
+2025-03-07 16:19:34,097 - root - INFO - Top confused classes for Stage 3: Type4 for Problem/Fault_Coupon/Gifts/Points Issues:
+2025-03-07 16:19:34,097 - root - INFO - 
+Per-class accuracy for Stage 3: Type4 for Problem/Fault_Coupon/Gifts/Points Issues:
+2025-03-07 16:19:34,097 - root - INFO - Can't use or acquire: 1.00 (3/3)
+2025-03-07 16:19:34,097 - root - INFO - Cooperated campaign issue: 1.00 (1/1)
+2025-03-07 16:19:34,098 - root - INFO - Original class distribution: {"Can't download Apps": np.int64(1), "Can't install Apps": np.int64(7), "Can't update Apps": np.int64(1), 'Other download/install/update issue': np.int64(3), 'Unknown': np.int64(1)}
+2025-03-07 16:19:34,098 - root - INFO - Resampled class distribution: {"Can't download Apps": np.int64(1), "Can't install Apps": np.int64(7), "Can't update Apps": np.int64(1), 'Other download/install/update issue': np.int64(7), 'Unknown': np.int64(1)}
+2025-03-07 16:19:34,098 - root - INFO - Resampled data shape: (17, 1500), Original: (13, 1500)
+2025-03-07 16:19:34,601 - root - INFO - Saved confusion matrix to error_analysis/confusion_matrix_Stage 3_ Type4 for Problem_Fault_AppGallery-Install_Upgrade_20250307_161934.png
+2025-03-07 16:19:34,601 - root - INFO - Top confused classes for Stage 3: Type4 for Problem/Fault_AppGallery-Install/Upgrade:
+2025-03-07 16:19:34,601 - root - INFO - True: Can't update Apps, Predicted: Other download/install/update issue, Count: 2, Rate: 1.00
+2025-03-07 16:19:34,602 - root - INFO - 
+Per-class accuracy for Stage 3: Type4 for Problem/Fault_AppGallery-Install/Upgrade:
+2025-03-07 16:19:34,602 - root - INFO - Can't install Apps: 1.00 (2/2)
+2025-03-07 16:19:34,602 - root - INFO - Can't update Apps: 0.00 (0/2)
+2025-03-07 16:19:34,602 - root - INFO - Other download/install/update issue: 1.00 (2/2)
+2025-03-07 16:19:34,602 - root - INFO - Original class distribution: {'Others': np.int64(4), 'Personal data': np.int64(3)}
+2025-03-07 16:19:34,603 - root - INFO - Resampled class distribution: {'Others': np.int64(4), 'Personal data': np.int64(4)}
+2025-03-07 16:19:34,603 - root - INFO - Resampled data shape: (8, 1500), Original: (7, 1500)
+2025-03-07 16:19:35,328 - root - INFO - 
+Processing group: In-App Purchase 
+2025-03-07 16:19:35,346 - root - INFO - TF-IDF embeddings shape: (84, 1500)
+2025-03-07 16:19:35,347 - root - INFO - 
+==== Chained Multi-Output Classification ====
+2025-03-07 16:19:35,349 - root - INFO - Original class distribution: {'Others': np.int64(2), 'Problem/Fault': np.int64(8), 'Suggestion': np.int64(57)}
+2025-03-07 16:19:35,349 - root - INFO - Resampled class distribution: {'Others': np.int64(2), 'Problem/Fault': np.int64(57), 'Suggestion': np.int64(57)}
+2025-03-07 16:19:35,349 - root - INFO - Resampled data shape: (116, 1500), Original: (67, 1500)
+2025-03-07 16:19:35,892 - root - INFO - Saved confusion matrix to error_analysis/confusion_matrix_Stage 1_ Type2_20250307_161935.png
+2025-03-07 16:19:35,892 - root - INFO - Top confused classes for Stage 1: Type2:
+2025-03-07 16:19:35,892 - root - INFO - True: Problem/Fault, Predicted: Suggestion, Count: 2, Rate: 1.00
+2025-03-07 16:19:35,892 - root - INFO - True: Suggestion, Predicted: Problem/Fault, Count: 1, Rate: 0.07
+2025-03-07 16:19:35,892 - root - INFO - 
+Per-class accuracy for Stage 1: Type2:
+2025-03-07 16:19:35,892 - root - INFO - Problem/Fault: 0.00 (0/2)
+2025-03-07 16:19:35,892 - root - INFO - Suggestion: 0.93 (14/15)
+2025-03-07 16:19:35,956 - root - INFO - Saved confusion matrix to error_analysis/confusion_matrix_Stage 2_ Type2+Type3_20250307_161935.png
+2025-03-07 16:19:35,957 - root - INFO - Top confused classes for Stage 2: Type2+Type3:
+2025-03-07 16:19:35,957 - root - INFO - True: Suggestion_Payment, Predicted: Suggestion_Invoice, Count: 2, Rate: 0.17
+2025-03-07 16:19:35,957 - root - INFO - True: Problem/Fault_Payment issue, Predicted: Suggestion_Payment, Count: 1, Rate: 0.50
+2025-03-07 16:19:35,957 - root - INFO - True: Suggestion_Invoice, Predicted: Suggestion_Payment, Count: 1, Rate: 0.50
+2025-03-07 16:19:35,957 - root - INFO - True: Suggestion_Payment, Predicted: Problem/Fault_Payment issue, Count: 1, Rate: 0.08
+2025-03-07 16:19:35,957 - root - INFO - 
+Per-class accuracy for Stage 2: Type2+Type3:
+2025-03-07 16:19:35,957 - root - INFO - Problem/Fault_Payment issue: 0.50 (1/2)
+2025-03-07 16:19:35,957 - root - INFO - Suggestion_Invoice: 0.50 (1/2)
+2025-03-07 16:19:35,957 - root - INFO - Suggestion_Other: 1.00 (1/1)
+2025-03-07 16:19:35,957 - root - INFO - Suggestion_Payment: 0.75 (9/12)
+2025-03-07 16:19:36,040 - root - INFO - Saved confusion matrix to error_analysis/confusion_matrix_Stage 3_ Type2+Type3+Type4_20250307_161935.png
+2025-03-07 16:19:36,040 - root - INFO - Top confused classes for Stage 3: Type2+Type3+Type4:
+2025-03-07 16:19:36,040 - root - INFO - True: Suggestion_Payment_Subscription cancellation, Predicted: Suggestion_Invoice_Invoice related request, Count: 2, Rate: 0.18
+2025-03-07 16:19:36,040 - root - INFO - True: Other, Predicted: Suggestion_Invoice_Invoice related request, Count: 1, Rate: 1.00
+2025-03-07 16:19:36,040 - root - INFO - True: Problem/Fault_Payment issue_Risk Control, Predicted: Suggestion_Payment_Subscription cancellation, Count: 1, Rate: 1.00
+2025-03-07 16:19:36,040 - root - INFO - True: Suggestion_Invoice_Invoice related request, Predicted: Suggestion_Payment_Subscription cancellation, Count: 1, Rate: 0.50
+2025-03-07 16:19:36,040 - root - INFO - True: Suggestion_Payment_Query deduction details, Predicted: Suggestion_Payment_Subscription cancellation, Count: 1, Rate: 1.00
+2025-03-07 16:19:36,040 - root - INFO - True: Suggestion_Payment_Subscription cancellation, Predicted: Problem/Fault_Payment issue_Risk Control, Count: 1, Rate: 0.09
+2025-03-07 16:19:36,040 - root - INFO - 
+Per-class accuracy for Stage 3: Type2+Type3+Type4:
+2025-03-07 16:19:36,040 - root - INFO - Other: 0.00 (0/1)
+2025-03-07 16:19:36,040 - root - INFO - Problem/Fault_Payment issue_Risk Control: 0.00 (0/1)
+2025-03-07 16:19:36,040 - root - INFO - Suggestion_Invoice_Invoice related request: 0.50 (1/2)
+2025-03-07 16:19:36,040 - root - INFO - Suggestion_Other_Unknown: 1.00 (1/1)
+2025-03-07 16:19:36,040 - root - INFO - Suggestion_Payment_Query deduction details: 0.00 (0/1)
+2025-03-07 16:19:36,040 - root - INFO - Suggestion_Payment_Subscription cancellation: 0.73 (8/11)
+2025-03-07 16:19:36,040 - root - INFO - 
+==== Hierarchical Modeling ====
+2025-03-07 16:19:36,042 - root - INFO - Original class distribution: {'Others': np.int64(2), 'Problem/Fault': np.int64(8), 'Suggestion': np.int64(57)}
+2025-03-07 16:19:36,042 - root - INFO - Resampled class distribution: {'Others': np.int64(2), 'Problem/Fault': np.int64(57), 'Suggestion': np.int64(57)}
+2025-03-07 16:19:36,042 - root - INFO - Resampled data shape: (116, 1500), Original: (67, 1500)
+2025-03-07 16:19:36,618 - root - INFO - Saved confusion matrix to error_analysis/confusion_matrix_Stage 1_ Type 2_20250307_161936.png
+2025-03-07 16:19:36,618 - root - INFO - Top confused classes for Stage 1: Type 2:
+2025-03-07 16:19:36,618 - root - INFO - True: Problem/Fault, Predicted: Suggestion, Count: 2, Rate: 1.00
+2025-03-07 16:19:36,618 - root - INFO - 
+Per-class accuracy for Stage 1: Type 2:
+2025-03-07 16:19:36,618 - root - INFO - Problem/Fault: 0.00 (0/2)
+2025-03-07 16:19:36,618 - root - INFO - Suggestion: 1.00 (15/15)
+2025-03-07 16:19:36,619 - root - INFO - Original class distribution: {'Invoice': np.int64(6), 'Other': np.int64(5), 'Payment': np.int64(45), 'Refund': np.int64(1)}
+2025-03-07 16:19:36,619 - root - INFO - Resampled class distribution: {'Invoice': np.int64(45), 'Other': np.int64(45), 'Payment': np.int64(45), 'Refund': np.int64(1)}
+2025-03-07 16:19:36,619 - root - INFO - Resampled data shape: (136, 1500), Original: (57, 1500)
+2025-03-07 16:19:37,200 - root - INFO - Saved confusion matrix to error_analysis/confusion_matrix_Stage 2_ Type3 for Suggestion_20250307_161937.png
+2025-03-07 16:19:37,200 - root - INFO - Top confused classes for Stage 2: Type3 for Suggestion:
+2025-03-07 16:19:37,200 - root - INFO - True: Invoice, Predicted: Payment, Count: 1, Rate: 0.50
+2025-03-07 16:19:37,200 - root - INFO - 
+Per-class accuracy for Stage 2: Type3 for Suggestion:
+2025-03-07 16:19:37,200 - root - INFO - Invoice: 0.50 (1/2)
+2025-03-07 16:19:37,200 - root - INFO - Other: 1.00 (1/1)
+2025-03-07 16:19:37,200 - root - INFO - Payment: 1.00 (12/12)
+2025-03-07 16:19:37,201 - root - INFO - Original class distribution: {'Query deduction details': np.int64(4), 'Subscription cancellation': np.int64(41)}
+2025-03-07 16:19:37,201 - root - INFO - Resampled class distribution: {'Query deduction details': np.int64(41), 'Subscription cancellation': np.int64(41)}
+2025-03-07 16:19:37,201 - root - INFO - Resampled data shape: (82, 1500), Original: (45, 1500)
+2025-03-07 16:19:37,725 - root - INFO - Saved confusion matrix to error_analysis/confusion_matrix_Stage 3_ Type4 for Suggestion_Payment_20250307_161937.png
+2025-03-07 16:19:37,725 - root - INFO - Top confused classes for Stage 3: Type4 for Suggestion_Payment:
+2025-03-07 16:19:37,725 - root - INFO - True: Query deduction details, Predicted: Subscription cancellation, Count: 1, Rate: 1.00
+2025-03-07 16:19:37,725 - root - INFO - 
+Per-class accuracy for Stage 3: Type4 for Suggestion_Payment:
+2025-03-07 16:19:37,725 - root - INFO - Query deduction details: 0.00 (0/1)
+2025-03-07 16:19:37,725 - root - INFO - Subscription cancellation: 1.00 (11/11)
+2025-03-07 16:19:38,149 - root - INFO - 
+Classification completed successfully

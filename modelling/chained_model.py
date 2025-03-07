@@ -2,11 +2,26 @@ from modelling.randomforest import RandomForest
 from Config import Config
 import numpy as np
 import warnings
+import os
 from collections import Counter
 from sklearn.metrics import classification_report
 from sklearn.exceptions import UndefinedMetricWarning
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
+import logging
+
+# Import our utility modules
+import sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+try:
+    from utils.imbalance_handling import handle_imbalance
+    from utils.error_analysis import detailed_error_analysis
+
+    UTILS_AVAILABLE = True
+except ImportError:
+    UTILS_AVAILABLE = False
+    logging.warning("Utils modules not found. Using basic implementation.")
 
 # Suppress undefined metric warnings
 warnings.filterwarnings("ignore", category=UndefinedMetricWarning)
@@ -76,8 +91,10 @@ def chained_model_predict(data, df, group_name):
     df['true_stage3'] = df[Config.TYPE_COLS[0]].astype(str) + "_" + df[Config.TYPE_COLS[1]].astype(str) + "_" + df[
         Config.TYPE_COLS[2]].astype(str)
 
-    df['true_stage2'] = filter_rare_labels(df['true_stage2'], threshold=5)
-    df['true_stage3'] = filter_rare_labels(df['true_stage3'], threshold=5)
+    # Apply rare label filtering with adjusted threshold
+    rare_threshold = 4 if len(df) < 100 else 5
+    df['true_stage2'] = filter_rare_labels(df['true_stage2'], threshold=rare_threshold)
+    df['true_stage3'] = filter_rare_labels(df['true_stage3'], threshold=rare_threshold)
 
     # Split data into train and test sets
     X = data.embeddings
@@ -107,22 +124,57 @@ def chained_model_predict(data, df, group_name):
         test_labels = test_df[target_col].astype(str).to_numpy()
         stage_true_labels[target_col] = test_labels
 
-        # Create and train model directly instead of using the data object methods
-        if stage_name == "Stage 1: Type2":
-            model = RandomForest("RandomForest_" + stage_name, X_train, train_labels)
-            model.mdl.fit(X_train, train_labels)
-        else:
-            # Use LogisticRegression for stages 2 and 3
-            model = RandomForest("RandomForest_" + stage_name, X_train, train_labels)
-            model.mdl = LogisticRegression(max_iter=1000, class_weight='balanced', random_state=0)
-            model.mdl.fit(X_train, train_labels)
+        # Handle class imbalance if utils are available
+        if UTILS_AVAILABLE:
+            if stage_name == "Stage 1: Type2":
+                resampling_strategy = 'simple'
+            else:
+                resampling_strategy = 'none'  # Skip resampling for later stages
 
-        # Get predictions directly using the trained model
-        preds = model.mdl.predict(X_test)
+            X_train_balanced, train_labels_balanced = handle_imbalance(
+                X_train, train_labels, strategy=resampling_strategy
+            )
+        else:
+            X_train_balanced, train_labels_balanced = X_train, train_labels
+
+        # Choose model based on stage
+        if stage_name == "Stage 1: Type2":
+            # Use RandomForest for Stage 1 - more reliable with small dataset
+            model = RandomForest("RandomForest_" + stage_name, X_train_balanced, train_labels_balanced)
+            # Adjust parameters for smaller datasets
+            if len(X_train_balanced) < 100:
+                model.mdl.n_estimators = 100  # Reduce complexity for small datasets
+
+            model.mdl.fit(X_train_balanced, train_labels_balanced)
+            preds = model.mdl.predict(X_test)
+        else:
+            # Use LogisticRegression for Stages 2 and 3
+            model = RandomForest("RandomForest_" + stage_name, X_train_balanced, train_labels_balanced)
+            if len(np.unique(train_labels_balanced)) > 10:
+                # More solver iterations for complex problems with many classes
+                model.mdl = LogisticRegression(max_iter=2000, class_weight='balanced', random_state=0, solver='saga')
+            else:
+                model.mdl = LogisticRegression(max_iter=1000, class_weight='balanced', random_state=0)
+
+            model.mdl.fit(X_train_balanced, train_labels_balanced)
+            preds = model.mdl.predict(X_test)
+
+        # Store predictions
         stage_predictions[target_col] = preds
 
+        # Print classification report
         print(classification_report(test_labels, preds, zero_division=0))
 
+        # Perform detailed error analysis if available
+        if UTILS_AVAILABLE:
+            try:
+                detailed_error_analysis(test_labels, preds,
+                                        class_names=np.unique(np.concatenate((test_labels, preds))),
+                                        stage_name=stage_name)
+            except Exception as e:
+                logging.warning(f"Error analysis failed: {str(e)}")
+
+    # Calculate and print overall accuracy
     overall_acc = compute_chained_accuracy(
         stage_true_labels['true_stage1'], stage_predictions['true_stage1'],
         stage_true_labels['true_stage2'], stage_predictions['true_stage2'],
