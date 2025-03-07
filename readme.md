@@ -1,4 +1,4 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
+<img src="https://studentsurvey.ie/sites/default/files/2019-10/NCI%20logoresized.png" class="logo" width="120"/>
 
 # 
 
