@@ -5,6 +5,8 @@ import warnings
 from collections import Counter
 from sklearn.metrics import classification_report
 from sklearn.exceptions import UndefinedMetricWarning
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
 
 # Suppress undefined metric warnings
 warnings.filterwarnings("ignore", category=UndefinedMetricWarning)
@@ -22,12 +24,12 @@ def compute_chained_accuracy(true_stage1, pred_stage1, true_stage2, pred_stage2,
     """
     Compute overall chained accuracy per instance:
       - 33.33% credit if Stage 1 is correct.
-      - Additional 33.33% if Stage 2 is correct (and Stage 1 was correct).
-      - Additional 33.34% if Stage 3 is correct (with Stage 1 and 2 correct).
-    The overall accuracy is the average of per-instance scores.
+      - Additional 33.33% if Stage 2 is correct (given Stage 1 is correct).
+      - Additional 33.34% if Stage 3 is correct (given Stages 1 and 2 are correct).
+    Returns:
+        float: Average accuracy across all instances.
     """
     total_scores = []
-    # Convert all values to strings for consistency.
     true_stage1 = [str(x) for x in true_stage1]
     pred_stage1 = [str(x) for x in pred_stage1]
     true_stage2 = [str(x) for x in true_stage2]
@@ -42,7 +44,7 @@ def compute_chained_accuracy(true_stage1, pred_stage1, true_stage2, pred_stage2,
             if pred_stage2[i] == true_stage2[i]:
                 score += 33.33
                 if pred_stage3[i] == true_stage3[i]:
-                    score += 33.34  # Totals 100%
+                    score += 33.34
         total_scores.append(score)
     overall_accuracy = sum(total_scores) / len(total_scores)
     return overall_accuracy
@@ -50,22 +52,45 @@ def compute_chained_accuracy(true_stage1, pred_stage1, true_stage2, pred_stage2,
 
 def chained_model_predict(data, df, group_name):
     """
-    Implements chained multi-output classification in three stages:
+    Implements chained multi-output classification:
       - Stage 1: Predict Type2.
-      - Stage 2: Predict concatenated Type2+Type3.
-      - Stage 3: Predict concatenated Type2+Type3+Type4.
-    Then applies rare-label filtering to reduce class sparsity in Stage 2 and Stage 3.
-    Computes and prints overall chained accuracy for the group.
-    """
-    # Create target columns (casting to string)
-    df['true_stage1'] = df[Config.TYPE_COLS[0]].astype(str)
-    df['true_stage2'] = (df[Config.TYPE_COLS[0]].astype(str) + "_" + df[Config.TYPE_COLS[1]].astype(str))
-    df['true_stage3'] = (df[Config.TYPE_COLS[0]].astype(str) + "_" + df[Config.TYPE_COLS[1]].astype(str) + "_" + df[
-        Config.TYPE_COLS[2]].astype(str))
+      - Stage 2: Predict concatenated target (Type2+Type3).
+      - Stage 3: Predict concatenated target (Type2+Type3+Type4).
 
-    # Apply rare-label filtering to Stage 2 and Stage 3 targets
+    Targets are built using a clear separator, with missing values replaced by "Unknown"
+    and rare labels (fewer than 5 occurrences) merged to "Other".
+
+    For Stage 2 and Stage 3, we use logistic regression as an alternative classifier.
+
+    IMPORTANT: The group DataFrame index is reset so that indices align with the embedding matrix.
+
+    Computes and prints the overall chained accuracy for the group.
+    """
+    df = df.reset_index(drop=True)
+
+    for col in Config.TYPE_COLS:
+        df[col] = df[col].fillna("Unknown").replace("nan", "Unknown")
+
+    df['true_stage1'] = df[Config.TYPE_COLS[0]].astype(str)
+    df['true_stage2'] = df[Config.TYPE_COLS[0]].astype(str) + "_" + df[Config.TYPE_COLS[1]].astype(str)
+    df['true_stage3'] = df[Config.TYPE_COLS[0]].astype(str) + "_" + df[Config.TYPE_COLS[1]].astype(str) + "_" + df[
+        Config.TYPE_COLS[2]].astype(str)
+
     df['true_stage2'] = filter_rare_labels(df['true_stage2'], threshold=5)
     df['true_stage3'] = filter_rare_labels(df['true_stage3'], threshold=5)
+
+    # Split data into train and test sets
+    X = data.embeddings
+    test_size = 0.2
+    train_indices, test_indices = train_test_split(
+        np.arange(len(df)), test_size=test_size, random_state=0,
+        stratify=df[Config.TYPE_COLS[0]]
+    )
+
+    X_train = X[train_indices]
+    X_test = X[test_indices]
+    train_df = df.iloc[train_indices].copy()
+    test_df = df.iloc[test_indices].copy()
 
     stages = [
         ("Stage 1: Type2", 'true_stage1'),
@@ -73,36 +98,34 @@ def chained_model_predict(data, df, group_name):
         ("Stage 3: Type2+Type3+Type4", 'true_stage3')
     ]
 
-    # Dictionaries to store true labels and predictions for each stage.
     stage_predictions = {}
     stage_true_labels = {}
 
-    # Filter embeddings to include only the rows corresponding to the current group.
-    filtered_embeddings = data.embeddings[df.index, :]
-
     for stage_name, target_col in stages:
         print("\n=== {} ===".format(stage_name))
-        # Get true labels as strings.
-        true_labels = df[target_col].astype(str).to_numpy()
-        stage_true_labels[target_col] = true_labels
+        train_labels = train_df[target_col].astype(str).to_numpy()
+        test_labels = test_df[target_col].astype(str).to_numpy()
+        stage_true_labels[target_col] = test_labels
 
-        # Initialize a RandomForest model using the filtered embeddings.
-        model = RandomForest("RandomForest_" + stage_name, filtered_embeddings, true_labels)
-        model.train(data)
-        model.predict(filtered_embeddings)
+        # Create and train model directly instead of using the data object methods
+        if stage_name == "Stage 1: Type2":
+            model = RandomForest("RandomForest_" + stage_name, X_train, train_labels)
+            model.mdl.fit(X_train, train_labels)
+        else:
+            # Use LogisticRegression for stages 2 and 3
+            model = RandomForest("RandomForest_" + stage_name, X_train, train_labels)
+            model.mdl = LogisticRegression(max_iter=1000, class_weight='balanced', random_state=0)
+            model.mdl.fit(X_train, train_labels)
 
-        # Convert predictions to strings.
-        preds = np.array(model.predictions).astype(str)
+        # Get predictions directly using the trained model
+        preds = model.mdl.predict(X_test)
         stage_predictions[target_col] = preds
 
-        # Print the classification report with zero_division parameter.
-        print(classification_report(true_labels, preds, zero_division=0))
+        print(classification_report(test_labels, preds, zero_division=0))
 
-    # Compute overall chained accuracy using the stored true labels and predictions.
     overall_acc = compute_chained_accuracy(
         stage_true_labels['true_stage1'], stage_predictions['true_stage1'],
         stage_true_labels['true_stage2'], stage_predictions['true_stage2'],
         stage_true_labels['true_stage3'], stage_predictions['true_stage3']
     )
-
     print("\nOverall Chained Accuracy for group '{}': {:.2f}%".format(group_name, overall_acc))

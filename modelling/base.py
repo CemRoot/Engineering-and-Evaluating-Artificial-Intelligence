@@ -1,37 +1,21 @@
 from abc import ABC, abstractmethod
 
-import pandas as pd
-import numpy as np
-
-
 class BaseModel(ABC):
+    """
+    Abstract BaseModel that defines the interface for all machine learning models.
+    Every model must implement train(), predict(), and print_results() methods.
+    """
     def __init__(self) -> None:
-        ...
-
+        pass
 
     @abstractmethod
     def train(self) -> None:
-        """
-        Train the model using ML Models for Multi-class and mult-label classification.
-        :params: df is essential, others are model specific
-        :return: classifier
-        """
-        ...
+        pass
 
     @abstractmethod
-    def predict(self) -> int:
-        """
-
-        """
-        ...
+    def predict(self, X_test) -> None:
+        pass
 
     @abstractmethod
-    def data_transform(self) -> None:
-        return
-
-    # def build(self, values) -> BaseModel:
-    def build(self, values={}):
-        values = values if isinstance(values, dict) else utils.string2any(values)
-        self.__dict__.update(self.defaults)
-        self.__dict__.update(values)
-        return self
+    def print_results(self, data) -> None:
+        pass
