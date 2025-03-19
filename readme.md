@@ -1,9 +1,7 @@
 <img src="https://studentsurvey.ie/sites/default/files/2019-10/NCI%20logoresized.png" class="logo" width="120"/>
 
 # 
-JOSE ALBERTO CRUZ SANCHEZ (x23191236)
 
-EMIN CEM  KOYLUOGLU (x23192542)
 ![image](https://github.com/user-attachments/assets/aacf6fbf-8a77-4c9c-a492-ff0e0ce96b33)
 
 ---
